@@ -130,20 +130,25 @@ int getNumDays(int month, int year) {
  * A function that prints the calendar for a given month and year
  */
 void printCalendar(int month, int year) {
+	// Print the header of the calendar with month and year centered
 	std::string str_m = getNameOfMonth(month) + " - " + std::to_string(year);
 	int remaining = 26 - str_m.length();
 	int spacesRight = remaining / 2;
 	int spacesLeft = remaining - spacesRight;
 	printf("\t%*s%s%*s\n", spacesLeft, "", str_m.c_str(), spacesRight, "");
 	
-	//std::cout << "\t\t" << getNameOfMonth(month) << " - " << year << std::endl;
+	// Print days of the week
 	std::cout << "\tSu  Mo  Tu  We  Th  Fr  Sa" << std::endl << "\t";
+	// find the current day of the week
 	int currDay = dayNumber(1, month, year); 
+	// print out spaces until that day
 	for(int i = 0; i < currDay; i++){
 		std::cout << "    ";
 	}
     
+	// get number of days in that month
 	int numDays = getNumDays(month, year);
+	// print out number and newline on saturday
 	for(int j = 1; j <= numDays; j++){
 		if(currDay == 6) {
 			currDay = 0;
@@ -158,6 +163,9 @@ void printCalendar(int month, int year) {
 	std::cout << std::endl;
 }
 
+/*
+ * A function to print out the usage message for the executable file
+ */
 void printUsage() {
 	std::cout << "Usage: plan <optional-arguments>" << std::endl;
 	std::cout << "\t-d <month-optional> <year-optional>: displays the calendar ";
@@ -166,6 +174,7 @@ void printUsage() {
 	std::cout << "displays all events on month/day/year" << std::endl;
 	std::cout << "\t-a <title> <desc> <day-optional> <month-optional <year-optional>";
 	std::cout << ": adds an event with the given title and description:" << std::endl;
+	std::cout << "\t-h: displays this help page" << std::endl;
 }
 
 int main(int argc, char* argv[]) {	
@@ -185,7 +194,11 @@ int main(int argc, char* argv[]) {
 
 	// Deal with command line args
 	for(int i = 1; i < argc; i++) {
-		if(std::string(argv[i]) == "-a") {
+		if(std::string(argv[i]) == "-h"){
+			printUsage();
+			exit(0);
+		}
+		else if(std::string(argv[i]) == "-a") {
 			a = true;
 		}
 		else if(std::string(argv[i]) == "-e") {
