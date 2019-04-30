@@ -125,9 +125,31 @@ int getNumDays(int month, int year) {
  */
 void printCalendar(int month, int year) {
 	std::cout << "\t\t" << getNameOfMonth(month) << " - " << year << std::endl;
-	//TODO Finish method
+	std::cout << "\tSu  Mo  Tu  We  Th  Fr  Sa" << std::endl << "\t";
+	int currDay = dayNumber(1, month, year); 
+	for(int i = 0; i < currDay; i++){
+		std::cout << "    ";
+	}
+    
+	int numDays = getNumDays(month, year);
+	for(int j = 1; j <= numDays; j++){
+		if(currDay == 6) {
+			currDay = 0;
+			printf("%-2d\n\t", j);
+		}
+		else {
+			currDay++;
+			printf("%2d  ", j);
+		}
+	}
+
+	std::cout << std::endl;
 }
 
 int main(int argc, char* argv[]) {	
+	if(argc != 3){
+		std::cout << "Usage: ./plan <month> <year>" << std::endl;
+		exit(0);
+	}
 	printCalendar(atoi(argv[1]), atoi(argv[2]));
 }
