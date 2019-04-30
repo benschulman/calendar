@@ -172,10 +172,8 @@ int main(int argc, char* argv[]) {
 	bool a = false;
 	
 	int day = lt->tm_mday;
-	int month = lt->tm_mon;
+	int month = lt->tm_mon + 1;
 	int year = lt->tm_year + 1900; 
-
-	std::cout << day << month << year << std::endl;
 
 	for(int i = 1; i < argc; i++){
 		if(std::string(argv[i]) == "-a") {
