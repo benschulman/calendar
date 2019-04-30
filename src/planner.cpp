@@ -130,7 +130,13 @@ int getNumDays(int month, int year) {
  * A function that prints the calendar for a given month and year
  */
 void printCalendar(int month, int year) {
-	std::cout << "\t\t" << getNameOfMonth(month) << " - " << year << std::endl;
+	std::string str_m = getNameOfMonth(month) + " - " + std::to_string(year);
+	int remaining = 26 - str_m.length();
+	int spacesRight = remaining / 2;
+	int spacesLeft = remaining - spacesRight;
+	printf("\t%*s%s%*s\n", spacesLeft, "", str_m.c_str(), spacesRight, "");
+	
+	//std::cout << "\t\t" << getNameOfMonth(month) << " - " << year << std::endl;
 	std::cout << "\tSu  Mo  Tu  We  Th  Fr  Sa" << std::endl << "\t";
 	int currDay = dayNumber(1, month, year); 
 	for(int i = 0; i < currDay; i++){
@@ -163,25 +169,29 @@ void printUsage() {
 }
 
 int main(int argc, char* argv[]) {	
-	std::time_t rawtime = time(nullptr);
-	struct tm* lt = localtime(&rawtime);
 	// list events option
 	bool e = false;
-
 	// add event option
 	bool a = false;
+
+	// Get current time and create tm struct
+	std::time_t rawtime = time(nullptr);
+	struct tm* lt = localtime(&rawtime);
 	
+	// Current day month and year
 	int day = lt->tm_mday;
 	int month = lt->tm_mon + 1;
 	int year = lt->tm_year + 1900; 
 
-	for(int i = 1; i < argc; i++){
+	// Deal with command line args
+	for(int i = 1; i < argc; i++) {
 		if(std::string(argv[i]) == "-a") {
 			a = true;
 		}
 		else if(std::string(argv[i]) == "-e") {
 			e = true;
 		} 
+		// Pick your own month to display
 		else if(std::string(argv[i]) == "-d") {
 			if(argc <= i+2) {
 				printUsage();
