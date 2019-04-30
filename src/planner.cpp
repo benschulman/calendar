@@ -10,8 +10,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include <iostream>
 #include <time.h>
+#include <ctime>
 #include <stdlib.h>
 #include <stdio.h>
+#include <vector>
+
 
 struct Event {
 	time_t start;
@@ -21,6 +24,8 @@ struct Event {
 	std::string title;
 	std::string description;
 };
+
+std::vector<Event> events;
 
 /*
  * A Function that returns the index of the day of the date- day/month/year
@@ -147,15 +152,30 @@ void printCalendar(int month, int year) {
 	std::cout << std::endl;
 }
 
+void printUsage() {
+	std::cout << "Usage: plan <optional-arguments>" << std::endl;
+	std::cout << "\t-d <month-optional> <year-optional>: displays the calendar ";
+	std::cout << "for the given month and year" << std::endl;
+	std::cout << "\t-e <day-optional> <month-optional> <year-optional>: ";
+	std::cout << "displays all events on month/day/year" << std::endl;
+	std::cout << "\t-a <title> <desc> <day-optional> <month-optional <year-optional>";
+	std::cout << ": adds an event with the given title and description:" << std::endl;
+}
+
 int main(int argc, char* argv[]) {	
+	std::time_t rawtime = time(nullptr);
+	struct tm* lt = localtime(&rawtime);
 	// list events option
 	bool e = false;
 
 	// add event option
 	bool a = false;
 	
-	int month;
-	int year;
+	int day = lt->tm_mday;
+	int month = lt->tm_mon;
+	int year = lt->tm_year + 1900; 
+
+	std::cout << day << month << year << std::endl;
 
 	for(int i = 1; i < argc; i++){
 		if(std::string(argv[i]) == "-a") {
@@ -166,7 +186,7 @@ int main(int argc, char* argv[]) {
 		} 
 		else if(std::string(argv[i]) == "-d") {
 			if(argc <= i+2) {
-				//TODO: Add Error function
+				printUsage();
 				exit(1);
 			}
 			else {
