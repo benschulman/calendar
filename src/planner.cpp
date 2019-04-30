@@ -152,7 +152,7 @@ void printCalendar(int month, int year) {
 	std::cout << std::endl;
 }
 
-void printError() {
+void printUsage() {
 	std::cout << "Usage: plan <optional-arguments>" << std::endl;
 	std::cout << "\t-d <month-optional> <year-optional>: displays the calendar ";
 	std::cout << "for the given month and year" << std::endl;
@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
 		} 
 		else if(std::string(argv[i]) == "-d") {
 			if(argc <= i+2) {
-				printError();
+				printUsage();
 				exit(1);
 			}
 			else {
