@@ -36,3 +36,5 @@
 *.gitignore~
 *.cpp~
 *Makefile~
+
+bin

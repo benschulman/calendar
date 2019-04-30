@@ -168,16 +168,16 @@ void printCalendar(int month, int year) {
  */
 void printUsage() {
 	std::cout << "Usage: plan <optional-arguments>" << std::endl;
-	std::cout << "\t-d <month-optional> <year-optional>: displays the calendar ";
+	std::cout << "\t-d <month> <year>: displays the calendar ";
 	std::cout << "for the given month and year" << std::endl;
 	std::cout << "\t-e <day-optional> <month-optional> <year-optional>: ";
 	std::cout << "displays all events on month/day/year" << std::endl;
 	std::cout << "\t-a <title> <desc> <day-optional> <month-optional <year-optional>";
-	std::cout << ": adds an event with the given title and description:" << std::endl;
+	std::cout << ": adds an event with the given title and description" << std::endl;
 	std::cout << "\t-h: displays this help page" << std::endl;
 }
 
-int main(int argc, char* argv[]) {	
+int main(int argc, char* argv[]) {
 	// list events option
 	bool e = false;
 	// add event option
@@ -211,6 +211,7 @@ int main(int argc, char* argv[]) {
 				exit(1);
 			}
 			else {
+				// TODO: add catch
 				month = atoi(argv[++i]);
 				year  = atoi(argv[++i]);
 			}
