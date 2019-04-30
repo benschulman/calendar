@@ -12,6 +12,8 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <vector>
+
 
 struct Event {
 	time_t start;
@@ -21,6 +23,8 @@ struct Event {
 	std::string title;
 	std::string description;
 };
+
+std::vector<Event> events;
 
 /*
  * A Function that returns the index of the day of the date- day/month/year
