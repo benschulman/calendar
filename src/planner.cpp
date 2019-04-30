@@ -16,7 +16,8 @@
 struct Event {
 	time_t start;
 	time_t end;
-
+	
+	int id;
 	std::string title;
 	std::string description;
 };
@@ -135,7 +136,7 @@ void printCalendar(int month, int year) {
 	for(int j = 1; j <= numDays; j++){
 		if(currDay == 6) {
 			currDay = 0;
-			printf("%-2d\n\t", j);
+			printf("%2d\n\t", j);
 		}
 		else {
 			currDay++;
@@ -147,9 +148,33 @@ void printCalendar(int month, int year) {
 }
 
 int main(int argc, char* argv[]) {	
-	if(argc != 3){
-		std::cout << "Usage: ./plan <month> <year>" << std::endl;
-		exit(0);
-	}
-	printCalendar(atoi(argv[1]), atoi(argv[2]));
+	// list events option
+	bool e = false;
+
+	// add event option
+	bool a = false;
+	
+	int month;
+	int year;
+
+	for(int i = 1; i < argc; i++){
+		if(std::string(argv[i]) == "-a") {
+			a = true;
+		}
+		else if(std::string(argv[i]) == "-e") {
+			e = true;
+		} 
+		else if(std::string(argv[i]) == "-d") {
+			if(argc <= i+2) {
+				//TODO: Add Error function
+				exit(1);
+			}
+			else {
+				month = atoi(argv[++i]);
+				year  = atoi(argv[++i]);
+			}
+		}
+	}	
+
+	printCalendar(month, year);
 }
