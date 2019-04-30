@@ -135,10 +135,10 @@ void printCalendar(int month, int year) {
 	int remaining = 26 - str_m.length();
 	int spacesRight = remaining / 2;
 	int spacesLeft = remaining - spacesRight;
-	printf("\t%*s%s%*s\n", spacesLeft, "", str_m.c_str(), spacesRight, "");
+	printf("%*s%s%*s\n", spacesLeft, "", str_m.c_str(), spacesRight, "");
 	
 	// Print days of the week
-	std::cout << "\tSu  Mo  Tu  We  Th  Fr  Sa" << std::endl << "\t";
+	std::cout << "Su  Mo  Tu  We  Th  Fr  Sa" << std::endl;
 	// find the current day of the week
 	int currDay = dayNumber(1, month, year); 
 	// print out spaces until that day
@@ -152,7 +152,7 @@ void printCalendar(int month, int year) {
 	for(int j = 1; j <= numDays; j++){
 		if(currDay == 6) {
 			currDay = 0;
-			printf("%2d\n\t", j);
+			printf("%2d\n", j);
 		}
 		else {
 			currDay++;
@@ -177,12 +177,10 @@ void printUsage() {
 	std::cout << "\t-h: displays this help page" << std::endl;
 }
 
+/*
+ * The main function of this program
+ */
 int main(int argc, char* argv[]) {
-	// list events option
-	bool e = false;
-	// add event option
-	bool a = false;
-
 	// Get current time and create tm struct
 	std::time_t rawtime = time(nullptr);
 	struct tm* lt = localtime(&rawtime);
@@ -199,10 +197,15 @@ int main(int argc, char* argv[]) {
 			exit(0);
 		}
 		else if(std::string(argv[i]) == "-a") {
-			a = true;
+			//TODO: add functionality
 		}
 		else if(std::string(argv[i]) == "-e") {
-			e = true;
+			if(events.empty()){
+				std::cout << "No Events!" << std::endl;
+			}
+			//TODO: add functionality
+
+			exit(0);
 		} 
 		// Pick your own month to display
 		else if(std::string(argv[i]) == "-d") {
