@@ -172,14 +172,29 @@ void printUsage() {
 	std::cout << "for the given month and year" << std::endl;
 	std::cout << "\t-e <day-optional> <month-optional> <year-optional>: ";
 	std::cout << "displays all events on month/day/year" << std::endl;
-	std::cout << "\t-a <title> <desc> <day-optional> <month-optional <year-optional>";
+	std::cout << "\t-a <title> <desc> <day> <month> <year> <start-time> <end-time>";
 	std::cout << ": adds an event with the given title and description" << std::endl;
+	std::cout << "\t-r <day> <month> <year> <id>: removes the event with the";
+	std::cout << " specified day/month/year and id" << std::endl;
 	std::cout << "\t-h: displays this help page" << std::endl;
 }
 
-void printEvent(Event e) {
-	printf("%d\t%s\n%s\n%d - %d", e.id, e.title.c_str(), e.description.c_str(),
-			std::localtime(&(e.start))->tm_hour, std::localtime(&(e.end))->tm_hour); 
+/*
+ * This function prints the contents of an event.
+ */
+void printEvent(const Event& e) {
+	// Convert time_t to hours and minutes
+	int start_h = std::localtime(&(e.start))->tm_hour % 12;
+	int end_h = std::localtime(&(e.end))->tm_hour % 12;
+	int start_m = std::localtime(&(e.start))->tm_min; 
+	int end_m = std::localtime(&(e.end))->tm_min; 
+
+	// make 0 o'clock be 12 o'clock
+	start_h = start_h == 0 ? 12 : start_h;
+	end_h = end_h == 0 ? 12 : end_h;
+	// print formatted
+	printf("%d\t%s\n%s\n%d:%02d - %d:%02d\n", e.id, e.title.c_str(), e.description.c_str(),
+			start_h, start_m, end_h, end_m);
 }
 
 /*
