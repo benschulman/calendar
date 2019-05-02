@@ -177,6 +177,11 @@ void printUsage() {
 	std::cout << "\t-h: displays this help page" << std::endl;
 }
 
+void printEvent(Event e) {
+	printf("%d\t%s\n%s\n%d - %d", e.id, e.title.c_str(), e.description.c_str(),
+			std::localtime(&(e.start))->tm_hour, std::localtime(&(e.end))->tm_hour); 
+}
+
 /*
  * The main function of this program
  */
