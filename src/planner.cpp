@@ -172,7 +172,7 @@ void printUsage() {
 	std::cout << "for the given month and year" << std::endl;
 	std::cout << "\t-e <day-optional> <month-optional> <year-optional>: ";
 	std::cout << "displays all events on month/day/year" << std::endl;
-	std::cout << "\t-a <title> <desc> <day> <month> <year> <start-time> <end-time>";
+	std::cout << "\t-a \"title\" \"description\" <day> <month> <year> <start-time> <end-time>";
 	std::cout << ": adds an event with the given title and description" << std::endl;
 	std::cout << "\t-r <day> <month> <year> <id>: removes the event with the";
 	std::cout << " specified day/month/year and id" << std::endl;
@@ -198,6 +198,16 @@ void printEvent(const Event& e) {
 }
 
 /*
+ * A Function that parses a string of the form "hour:min" and stores hour in
+ * hour and minutes in min. Returns 0 on success. 1 on failure.
+ */
+int parseTime(const std::string& str, int *hour, int *min) {
+	*hour = atoi(str.substr(0, str.find(":")).c_str());
+	*min = atoi(str.substr(str.find(":")+1, str.length()).c_str());
+	return 0;
+}
+
+/*
  * The main function of this program
  */
 int main(int argc, char* argv[]) {
@@ -217,7 +227,52 @@ int main(int argc, char* argv[]) {
 			exit(0);
 		}
 		else if(std::string(argv[i]) == "-a") {
-			//TODO: add functionality
+			// events/day_month_year.events
+			if(argc < i+7){
+				printUsage();
+				exit(1);
+			}
+			
+			std::string title = argv[i+1];
+			std::string desc = argv[i+2];
+
+			day = atoi(argv[i+3]);
+			month = atoi(argv[i+4]);
+			year = atoi(argv[i+5]);
+
+			// time args should have the form 12:00 or 1:46
+			int start_h;
+			int start_m;
+			parseTime(std::string(argv[i+6]), &start_h, &start_m);
+
+			int end_h;
+			int end_m;
+			parseTime(std::string(argv[i+7]), &end_h, &end_m);
+
+			struct tm start;
+			struct tm end;
+
+			start.tm_sec = 0;
+			end.tm_sec = 0;
+			start.tm_min = start_m;
+			start.tm_hour = start_h - 1;
+			end.tm_min = end_m;
+			end.tm_hour = end_h -1;
+			start.tm_mday = day;
+			start.tm_mon = month - 1;
+			start.tm_year = year - 1900;
+			end.tm_mday = day;
+			end.tm_mon = month -1;
+			end.tm_year = year - 1900;
+
+			time_t start_t = mktime(&start);
+			time_t end_t = mktime(&end);
+
+			int id = 0;
+
+			Event e = {start_t, end_t, id, title, desc};
+
+			printEvent(e);
 		}
 		else if(std::string(argv[i]) == "-e") {
 			if(events.empty()){
