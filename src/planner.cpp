@@ -9,6 +9,8 @@
 // 				calendar via the command line as well as add events to days.
 ///////////////////////////////////////////////////////////////////////////////
 #include <iostream>
+#include <fstream>
+#include <sys/stat.h>
 #include <time.h>
 #include <ctime>
 #include <stdlib.h>
@@ -20,12 +22,9 @@ struct Event {
 	time_t start;
 	time_t end;
 	
-	int id;
 	std::string title;
 	std::string description;
 };
-
-std::vector<Event> events;
 
 /*
  * A Function that returns the index of the day of the date- day/month/year
@@ -174,8 +173,8 @@ void printUsage() {
 	std::cout << "displays all events on month/day/year" << std::endl;
 	std::cout << "\t-a \"title\" \"description\" <day> <month> <year> <start-time> <end-time>";
 	std::cout << ": adds an event with the given title and description" << std::endl;
-	std::cout << "\t-r <day> <month> <year> <id>: removes the event with the";
-	std::cout << " specified day/month/year and id" << std::endl;
+	std::cout << "\t-r <day> <month> <year> <title>: removes the event with the";
+	std::cout << " specified day/month/year and title" << std::endl;
 	std::cout << "\t-h: displays this help page" << std::endl;
 }
 
@@ -193,10 +192,16 @@ void printEvent(const Event& e) {
 	start_h = start_h == 0 ? 12 : start_h;
 	end_h = end_h == 0 ? 12 : end_h;
 	// print formatted
-	printf("%d\t%s\n%s\n%d:%02d - %d:%02d\n", e.id, e.title.c_str(), e.description.c_str(),
+	printf("\t%s\n%s\n%d:%02d - %d:%02d\n", e.title.c_str(), e.description.c_str(),
 			start_h, start_m, end_h, end_m);
 }
 
+/*
+ * This function prints the Event structs in the events vector
+ */
+void printEvents(const std::vector<Event>& events){
+	//TODO: implement printEvents
+}
 /*
  * A Function that parses a string of the form "hour:min" and stores hour in
  * hour and minutes in min. Returns 0 on success. 1 on failure.
@@ -204,6 +209,64 @@ void printEvent(const Event& e) {
 int parseTime(const std::string& str, int *hour, int *min) {
 	*hour = atoi(str.substr(0, str.find(":")).c_str());
 	*min = atoi(str.substr(str.find(":")+1, str.length()).c_str());
+	return 0;
+}
+
+/*
+ * This function takes in a filepath and a pointer to a vector and
+ * populates the vector with initialized event variables from the events
+ * file.
+ */
+void parseEvents(const std::string& filepath, std::vector<Event>* events){
+	//TODO: implement parseEvents
+}
+
+/*
+ * This function adds an event to the correct event file and
+ * prints all events on that day.
+ */
+void addEvent(Event& e) {
+	// create directory for events if it does not already exist
+	std::ofstream out;
+	mkdir("events", S_IRWXU);
+	
+	// retrieve day, month, year from event
+	// used to name evnt file
+	struct tm *t = localtime(&e.start);
+	int day = t->tm_mday;
+	int month = t->tm_mon;
+	int year = t->tm_year;
+
+	// filepath to the .evnt file used for storing all events
+	// on that day
+	std::string filepath = "events/"+std::to_string(day)+
+		std::to_string(month)+std::to_string(year)+".evnt";
+
+	// open file for appending
+	out.open(filepath, std::ios_base::app);
+	if(out.is_open() == false)
+		std::cout << "Error creating events file" << std::endl;
+
+	// write event to file
+	out << e.title << std::endl;
+	out << e.description << std::endl;
+	out << e.start << std::endl;
+	out << e.end << std::endl;
+	out << std::endl;	
+	out.close();
+
+	// create a vector to hold events
+	std::vector<Event> events;
+
+	// read in events from events file and display them
+	parseEvents(filepath, &events);
+	printEvents(events);
+}
+
+/*
+ * This function removes an event specified by the day month year and title
+ */
+int removeEvent(int day, int month, int year, const std::string& title) {
 	return 0;
 }
 
@@ -268,18 +331,12 @@ int main(int argc, char* argv[]) {
 			time_t start_t = mktime(&start);
 			time_t end_t = mktime(&end);
 
-			int id = 0;
 
-			Event e = {start_t, end_t, id, title, desc};
-
-			printEvent(e);
+			Event e = {start_t, end_t, title, desc};
+			addEvent(e);
 		}
 		else if(std::string(argv[i]) == "-e") {
-			if(events.empty()){
-				std::cout << "No Events!" << std::endl;
-			}
 			//TODO: add functionality
-
 			exit(0);
 		} 
 		// Pick your own month to display
