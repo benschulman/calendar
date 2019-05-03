@@ -27,6 +27,13 @@ struct Event {
 };
 
 /*
+ * Compares two events for STL sort algorithm
+ */
+bool compareEvents(Event e1, Event e2) {
+	return e1.start < e2.start;
+}
+
+/*
  * A Function that returns the index of the day of the date- day/month/year
  *
  * Index     Day
@@ -192,7 +199,7 @@ void printEvent(const Event& e) {
 	start_h = start_h == 0 ? 12 : start_h;
 	end_h = end_h == 0 ? 12 : end_h;
 	// print formatted
-	printf("\t%s\n%s\n%d:%02d - %d:%02d\n", e.title.c_str(), e.description.c_str(),
+	printf("%s\n%s\n%d:%02d - %d:%02d\n", e.title.c_str(), e.description.c_str(),
 			start_h, start_m, end_h, end_m);
 }
 
@@ -200,7 +207,10 @@ void printEvent(const Event& e) {
  * This function prints the Event structs in the events vector
  */
 void printEvents(const std::vector<Event>& events){
-	//TODO: implement printEvents
+	for(auto it = events.begin(); it != events.end(); it++){
+		printEvent(*it);
+		std::cout << std::endl;
+	}
 }
 /*
  * A Function that parses a string of the form "hour:min" and stores hour in
@@ -216,9 +226,64 @@ int parseTime(const std::string& str, int *hour, int *min) {
  * This function takes in a filepath and a pointer to a vector and
  * populates the vector with initialized event variables from the events
  * file.
+ *
+ * Event files are of the form:
+ * Title1
+ * Description1
+ * start time 1 (as time_t)
+ * end time 1 (as time_t)
+ *
+ * Title2
+ *  ...
+ *
+ *
  */
 void parseEvents(const std::string& filepath, std::vector<Event>* events){
-	//TODO: implement parseEvents
+	// open streams and declare variables
+	std::ifstream in;
+	in.open(filepath);
+	std::string line;
+
+	time_t start;
+	time_t end;
+	std::string title;
+	std::string description;
+	
+	getline(in, line);
+
+	// parse file
+	while(!in.eof()){
+		for(int i = 0; i < 5; i++){
+			// title
+			if(i == 0){
+				title = line;
+			}
+			// description
+			else if(i == 1){
+				getline(in, line);
+				description = line;
+			}
+			// start time
+			else if(i == 2){
+				getline(in, line);
+				start = atoi(line.c_str());
+			}
+			// end time
+			else if(i == 3){
+				getline(in, line);
+				end = atoi(line.c_str());
+			}
+			else {
+				getline(in, line);
+				getline(in, line);
+			}
+		}
+		Event e = {start, end, title, description};
+		(*events).push_back(e);
+	}
+
+	in.close();
+	std::sort(events->begin(), events->end(), compareEvents);
 }
 
 /*
