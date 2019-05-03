@@ -176,7 +176,7 @@ void printUsage() {
 	std::cout << "Usage: plan <optional-arguments>" << std::endl;
 	std::cout << "\t-d <month> <year>: displays the calendar ";
 	std::cout << "for the given month and year" << std::endl;
-	std::cout << "\t-e <day-optional> <month-optional> <year-optional>: ";
+	std::cout << "\t-e <day> <month> <year>: ";
 	std::cout << "displays all events on month/day/year" << std::endl;
 	std::cout << "\t-a \"title\" \"description\" <day> <month> <year> <start-time> <end-time>";
 	std::cout << ": adds an event with the given title and description" << std::endl;
