@@ -243,7 +243,10 @@ void parseEvents(const std::string& filepath, std::vector<Event>* events){
 	std::ifstream in;
 	in.open(filepath);
 	std::string line;
-
+	if(!in.good()){
+		std::cout << "No Events on this day!" << std::endl;
+		exit(0);
+	}
 	time_t start;
 	time_t end;
 	std::string title;
@@ -299,8 +302,8 @@ void addEvent(Event& e) {
 	// used to name evnt file
 	struct tm *t = localtime(&e.start);
 	int day = t->tm_mday;
-	int month = t->tm_mon;
-	int year = t->tm_year;
+	int month = t->tm_mon + 1;
+	int year = t->tm_year + 1900;
 
 	// filepath to the .evnt file used for storing all events
 	// on that day
@@ -401,8 +404,25 @@ int main(int argc, char* argv[]) {
 			addEvent(e);
 		}
 		else if(std::string(argv[i]) == "-e") {
-			//TODO: add functionality
-			exit(0);
+			if(argc - i+1 < 3){
+				printUsage();
+				exit(1);
+			}
+			
+			day = atoi(argv[i+1]);
+			month = atoi(argv[i+2]);
+			year = atoi(argv[i+3]);
+
+			mkdir("events", S_IRWXU);
+			std::string filepath = std::string("events/") 
+				+ std::to_string(day)
+				+ std::to_string(month) 
+				+ std::to_string(year) 
+				+ std::string(".evnt");
+			std::vector<Event> events;
+			parseEvents(filepath, &events);
+			printEvents(events);
+
 		} 
 		// Pick your own month to display
 		else if(std::string(argv[i]) == "-d") {
