@@ -11,12 +11,14 @@
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>
 #include <ctime>
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
 
+#include "plan.h"
 
 struct Event {
 	time_t start;
@@ -212,6 +214,7 @@ void printEvents(const std::vector<Event>& events){
 		std::cout << std::endl;
 	}
 }
+
 /*
  * A Function that parses a string of the form "hour:min" and stores hour in
  * hour and minutes in min. Returns 0 on success. 1 on failure.
@@ -243,10 +246,11 @@ void parseEvents(const std::string& filepath, std::vector<Event>* events){
 	std::ifstream in;
 	in.open(filepath);
 	std::string line;
-	if(!in.good()){
-		std::cout << "No Events on this day!" << std::endl;
-		exit(0);
-	}
+	
+	// if file does not exist
+	if(!in.good())
+		return;
+
 	time_t start;
 	time_t end;
 	std::string title;
@@ -286,18 +290,16 @@ void parseEvents(const std::string& filepath, std::vector<Event>* events){
 	}
 
 	in.close();
-	std::sort(events->begin(), events->end(), compareEvents);
+}
+
+void removeEvent(const std::string& title, std::vector<Event>* events){
+	//TODO: remove event from events vector
 }
 
 /*
- * This function adds an event to the correct event file and
- * prints all events on that day.
+ * This function returns the filepath for the coresponding event
  */
-void addEvent(Event& e) {
-	// create directory for events if it does not already exist
-	std::ofstream out;
-	mkdir("events", S_IRWXU);
-	
+std::string getFilepath(const Event& e){
 	// retrieve day, month, year from event
 	// used to name evnt file
 	struct tm *t = localtime(&e.start);
@@ -307,35 +309,75 @@ void addEvent(Event& e) {
 
 	// filepath to the .evnt file used for storing all events
 	// on that day
-	std::string filepath = "events/"+std::to_string(day)+
-		std::to_string(month)+std::to_string(year)+".evnt";
+	return "events/" + std::to_string(day)+
+		std::to_string(month) + std::to_string(year) + ".evnt";
+}
 
-	// open file for appending
-	out.open(filepath, std::ios_base::app);
-	if(out.is_open() == false)
-		std::cout << "Error creating events file" << std::endl;
+/*
+ * This function adds an event to the correct event file and then returns
+ * a vector with the events from the corresponding day.
+ */
+std::vector<Event> addEvent(Event& e) {
+	// create directory for events if it does not already exist
+	std::ofstream out;
+	mkdir("events", S_IRWXU);
+	
+	std::string filepath = getFilepath(e);
 
-	// write event to file
+	// create events vector to store events and read in events
+	// from file
+	std::vector<Event> events;
+	parseEvents(filepath, &events);
+
+	// Add event and sort events vector
+	events.push_back(e);
+	std::sort(events.begin(), events.end(), compareEvents);
+
+	// write events vector to file
+	overwriteFile(filepath, events);
+	return events;
+}
+
+/* 
+ * This function writes a single event to the ofstream passed
+ * 
+ * The event is written in the form:
+ *
+ * Title
+ * Description
+ * start time (time_t)
+ * end time (time_t)
+ *
+ * Note: writes an empty line following end time
+ */
+void writeEvent(std::ofstream& out, const Event& e) {
 	out << e.title << std::endl;
 	out << e.description << std::endl;
 	out << e.start << std::endl;
 	out << e.end << std::endl;
 	out << std::endl;	
-	out.close();
-
-	// create a vector to hold events
-	std::vector<Event> events;
-
-	// read in events from events file and display them
-	parseEvents(filepath, &events);
-	printEvents(events);
 }
 
 /*
- * This function removes an event specified by the day month year and title
+ * This function overwrites the file at filepath with the events in the events
+ * vector.
+ *
+ * Format for how events are written is described in documentation for writeEvent
  */
-int removeEvent(int day, int month, int year, const std::string& title) {
-	return 0;
+void overwriteFile(const std::string& filepath, const std::vector<Event>& events) {
+	std::ofstream out;
+	out.open(filepath);
+
+	if(out.is_open() == false){
+		std::cout << "Error creating events file" << std::endl;
+		exit(1);
+	}
+
+	for(Event e:events){
+		writeEvent(out, e);
+	}
+
+	out.close();
 }
 
 /*
@@ -364,6 +406,7 @@ int main(int argc, char* argv[]) {
 				exit(1);
 			}
 			
+			//parse command line arguments
 			std::string title = argv[i+1];
 			std::string desc = argv[i+2];
 
@@ -380,6 +423,7 @@ int main(int argc, char* argv[]) {
 			int end_m;
 			parseTime(std::string(argv[i+7]), &end_h, &end_m);
 
+			// create a tm struct for start and end to convert to time_t
 			struct tm start;
 			struct tm end;
 
@@ -396,12 +440,15 @@ int main(int argc, char* argv[]) {
 			end.tm_mon = month -1;
 			end.tm_year = year - 1900;
 
+			// create time_t vars for storing in file
 			time_t start_t = mktime(&start);
 			time_t end_t = mktime(&end);
 
-
+			// create event and add it to the proper file
 			Event e = {start_t, end_t, title, desc};
-			addEvent(e);
+			std::vector<Event> events = addEvent(e);
+			// print events for that day
+			printEvents(events);
 		}
 		else if(std::string(argv[i]) == "-e") {
 			if(argc - i+1 < 3){
@@ -434,6 +481,31 @@ int main(int argc, char* argv[]) {
 				// TODO: add catch
 				month = atoi(argv[++i]);
 				year  = atoi(argv[++i]);
+			}
+		}
+		else if(std::string(argv[i]) == "-r"){
+			if(argc - i + 1 < 4){
+				printUsage();
+				exit(1);
+			}
+			else{
+				day = atoi(argv[i+1]);
+				month = atoi(argv[i+2]);
+				year = atoi(argv[i+3]);
+
+				std::string title = argv[i+4];
+				mkdir("events", S_IRWXU);
+				
+				std::string filepath = std::string("events/") 
+					+ std::to_string(day)
+					+ std::to_string(month) 
+					+ std::to_string(year) 
+					+ std::string(".evnt");
+
+				std::vector<Event> events;
+
+				parseEvents(filepath, &events);
+
 			}
 		}
 	}	
