@@ -36,6 +36,7 @@
 *.gitignore~
 *.cpp~
 *Makefile~
+*.h~
 
 bin
 *.evnt
