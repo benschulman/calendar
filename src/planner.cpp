@@ -182,7 +182,7 @@ void printUsage() {
 	std::cout << "displays all events on month/day/year" << std::endl;
 	std::cout << "\t-a \"title\" \"description\" <day> <month> <year> <start-time> <end-time>";
 	std::cout << ": adds an event with the given title and description" << std::endl;
-	std::cout << "\t-r <day> <month> <year> <title>: removes the event with the";
+	std::cout << "\t-r \"title\" <day> <month> <year>: removes the first event with the";
 	std::cout << " specified day/month/year and title" << std::endl;
 	std::cout << "\t-h: displays this help page" << std::endl;
 }
@@ -292,8 +292,22 @@ void parseEvents(const std::string& filepath, std::vector<Event>* events){
 	in.close();
 }
 
-void removeEvent(const std::string& title, std::vector<Event>* events){
-	//TODO: remove event from events vector
+/*
+ * This function takes in a filepath, a title and a poitner to a vecotr of
+ * events. The function removes the first event with the given title from
+ * the events vector and then overwrites the file with the updated events
+ * vector.
+ */
+void removeEvent(const std::string& filepath, const std::string& title, 
+		std::vector<Event>* events){
+	for(auto it = events->begin(); it != events->end(); it++){
+		if(title == it->title){
+			events->erase(it);
+			break;
+		}
+	}
+	
+	overwriteFile(filepath, *events);
 }
 
 /*
@@ -311,6 +325,17 @@ std::string getFilepath(const Event& e){
 	// on that day
 	return "events/" + std::to_string(day)+
 		std::to_string(month) + std::to_string(year) + ".evnt";
+}
+
+/*
+ * Ths function returns the filepath for the given date
+ */
+std::string getFilepath(int day, int month, int year){
+	return std::string("events/") 
+				+ std::to_string(day)
+				+ std::to_string(month) 
+				+ std::to_string(year) 
+				+ std::string(".evnt");
 }
 
 /*
@@ -365,6 +390,7 @@ void writeEvent(std::ofstream& out, const Event& e) {
  * Format for how events are written is described in documentation for writeEvent
  */
 void overwriteFile(const std::string& filepath, const std::vector<Event>& events) {
+	//TODO: If events is empty delete file
 	std::ofstream out;
 	out.open(filepath);
 
@@ -461,15 +487,11 @@ int main(int argc, char* argv[]) {
 			year = atoi(argv[i+3]);
 
 			mkdir("events", S_IRWXU);
-			std::string filepath = std::string("events/") 
-				+ std::to_string(day)
-				+ std::to_string(month) 
-				+ std::to_string(year) 
-				+ std::string(".evnt");
+			std::string filepath = getFilepath(day, month, year);
+
 			std::vector<Event> events;
 			parseEvents(filepath, &events);
 			printEvents(events);
-
 		} 
 		// Pick your own month to display
 		else if(std::string(argv[i]) == "-d") {
@@ -478,7 +500,6 @@ int main(int argc, char* argv[]) {
 				exit(1);
 			}
 			else {
-				// TODO: add catch
 				month = atoi(argv[++i]);
 				year  = atoi(argv[++i]);
 			}
@@ -489,23 +510,20 @@ int main(int argc, char* argv[]) {
 				exit(1);
 			}
 			else{
-				day = atoi(argv[i+1]);
-				month = atoi(argv[i+2]);
-				year = atoi(argv[i+3]);
+				day = atoi(argv[i+2]);
+				month = atoi(argv[i+3]);
+				year = atoi(argv[i+4]);
 
-				std::string title = argv[i+4];
+				std::string title = argv[i+1];
 				mkdir("events", S_IRWXU);
 				
-				std::string filepath = std::string("events/") 
-					+ std::to_string(day)
-					+ std::to_string(month) 
-					+ std::to_string(year) 
-					+ std::string(".evnt");
+				std::string filepath = getFilepath(day, month, year);
 
 				std::vector<Event> events;
-
 				parseEvents(filepath, &events);
 
+				removeEvent(filepath, title, &events);
+				printEvents(events);
 			}
 		}
 	}	
