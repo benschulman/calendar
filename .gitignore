@@ -37,6 +37,3 @@
 *.cpp~
 *Makefile~
 *.h~
-
-bin
-*.evnt
