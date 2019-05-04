@@ -182,7 +182,8 @@ void printUsage() {
 	std::cout << "\t-e <day> <month> <year>: ";
 	std::cout << "displays all events on month/day/year" << std::endl;
 	std::cout << "\t-a \"title\" \"description\" <day> <month> <year> <start-time> <end-time>";
-	std::cout << ": adds an event with the given title and description" << std::endl;
+	std::cout << ": adds an event with the given title and description. <start-time> and "; 
+	std::cout << "<end-time> should be written in the form 4:00 or 13:00. Only supports military time" << std::endl;
 	std::cout << "\t-r \"title\" <day> <month> <year>: removes the first event with the";
 	std::cout << " specified day/month/year and title" << std::endl;
 	std::cout << "\t-h: displays this help page" << std::endl;
