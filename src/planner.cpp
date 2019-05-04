@@ -301,6 +301,7 @@ void parseEvents(const std::string& filepath, std::vector<Event>* events){
  */
 void removeEvent(const std::string& filepath, const std::string& title, 
 		std::vector<Event>* events){
+	// loop through events finds one with matching title and removes
 	for(auto it = events->begin(); it != events->end(); it++){
 		if(title == it->title){
 			events->erase(it);
@@ -308,6 +309,7 @@ void removeEvent(const std::string& filepath, const std::string& title,
 		}
 	}
 	
+	// overwirteFile with updated events
 	overwriteFile(filepath, *events);
 }
 
@@ -391,15 +393,16 @@ void writeEvent(std::ofstream& out, const Event& e) {
  * Format for how events are written is described in documentation for writeEvent
  */
 void overwriteFile(const std::string& filepath, const std::vector<Event>& events) {
-	//TODO: If events is empty delete file
 	std::ofstream out;
 	out.open(filepath);
-
+	
+	// error with file
 	if(out.is_open() == false){
 		std::cout << "Error creating events file" << std::endl;
 		exit(1);
 	}
-
+	
+	// for each event write the event to the file
 	for(Event e:events){
 		writeEvent(out, e);
 	}
@@ -422,10 +425,12 @@ int main(int argc, char* argv[]) {
 
 	// Deal with command line args
 	for(int i = 1; i < argc; i++) {
+		// help arg
 		if(std::string(argv[i]) == "-h"){
 			printUsage();
 			exit(0);
 		}
+		// add event arg
 		else if(std::string(argv[i]) == "-a") {
 			// events/day_month_year.events
 			if(argc < i+7){
@@ -477,12 +482,15 @@ int main(int argc, char* argv[]) {
 			// print events for that day
 			printEvents(events);
 		}
+		// display events arg
 		else if(std::string(argv[i]) == "-e") {
+			// check correct number of args
 			if(argc - i+1 < 3){
 				printUsage();
 				exit(1);
 			}
 			
+			// parse args
 			day = atoi(argv[i+1]);
 			month = atoi(argv[i+2]);
 			year = atoi(argv[i+3]);
@@ -490,27 +498,33 @@ int main(int argc, char* argv[]) {
 			mkdir("events", S_IRWXU);
 			std::string filepath = getFilepath(day, month, year);
 
+			// display events
 			std::vector<Event> events;
 			parseEvents(filepath, &events);
 			printEvents(events);
 		} 
-		// Pick your own month to display
+		// Pick your own month to display arg
 		else if(std::string(argv[i]) == "-d") {
+			// checks for correct number of args
 			if(argc <= i+2) {
 				printUsage();
 				exit(1);
 			}
 			else {
+				// parses args
 				month = atoi(argv[++i]);
 				year  = atoi(argv[++i]);
 			}
 		}
+		// remove arg
 		else if(std::string(argv[i]) == "-r"){
+			// check for correct number of args
 			if(argc - i + 1 < 4){
 				printUsage();
 				exit(1);
 			}
 			else{
+				// parse remaining args
 				day = atoi(argv[i+2]);
 				month = atoi(argv[i+3]);
 				year = atoi(argv[i+4]);
@@ -520,9 +534,11 @@ int main(int argc, char* argv[]) {
 				
 				std::string filepath = getFilepath(day, month, year);
 
+				// parse events from file
 				std::vector<Event> events;
 				parseEvents(filepath, &events);
 
+				// remove correct event
 				removeEvent(filepath, title, &events);
 				printEvents(events);
 			}
