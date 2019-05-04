@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
+#include <algorithm>
 
 #include "plan.h"
 
