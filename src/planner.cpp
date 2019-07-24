@@ -412,10 +412,22 @@ void overwriteFile(const std::string& filepath, const std::vector<Event>& events
 }
 
 /*
+ * Function will run on startup.
+ */
+void startUp() {
+	// Check for .planrc folder in ~
+	// Read settings
+	// Check for ~/.plan/ directory
+	// Create if does not exist
+	 
+}
+
+/*
  * The main function of this program
  */
 int main(int argc, char* argv[]) {
 	// Get current time and create tm struct
+/*
 	std::time_t rawtime = time(nullptr);
 	struct tm* lt = localtime(&rawtime);
 	
@@ -545,6 +557,6 @@ int main(int argc, char* argv[]) {
 			}
 		}
 	}	
-
+*/
 	printCalendar(month, year);
 }
