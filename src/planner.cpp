@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <vector>
 #include <algorithm>
+#include <getopt.h>
+#include <cstring>
 
 #include "plan.h"
 
@@ -412,23 +414,51 @@ void overwriteFile(const std::string& filepath, const std::vector<Event>& events
 }
 
 /*
- * Function will run on startup.
+ * Function will run on start up.
  */
 void startUp() {
 	// Check for .planrc folder in $HOME 
 	// Read settings
-	// Check for ~/.plan/ directory
+	// make ~/.plan directory if it does not exist
+	char home[100] = "";
+	std::strcat(home, std::getenv("HOME"));
+	std::strcat(home, "/.plan");
+	mkdir(home, S_IRWXU);
+}
+
+void processArgs(int argc, char **argv) {
+	const char* const shortOpts = "a";
+	const option longOpts[] = {
+		{"add", no_argument, nullptr, 'a'}
+	};
 	
-	// Create if does not exist
-	 
+	while(true) {
+		const auto opt = getopt_long(argc, argv, shortOpts, longOpts, nullptr);
+		if(opt == -1)
+			break;
+		switch (opt)
+		{
+		case 'a':
+			// Set Add Flag and Add events
+			break;
+		
+		case '?':
+		default:
+			printUsage();
+			break;
+		}
+	}
 }
 
 /*
  * The main function of this program
  */
-int main(int argc, char* argv[]) {
-	// Get current time and create tm struct
+int main(int argc, char **argv) {
+	// Parse command line arguments
+	startUp();
+	processArgs(argc, argv);
 /*
+	// Get current time and create tm struct
 	std::time_t rawtime = time(nullptr);
 	struct tm* lt = localtime(&rawtime);
 	
@@ -559,5 +589,5 @@ int main(int argc, char* argv[]) {
 		}
 	}	
 */
-	printCalendar(month, year);
+	printCalendar(10, 2019);
 }
