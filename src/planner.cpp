@@ -428,7 +428,7 @@ void startUp() {
  */
 int main(int argc, char* argv[]) {
 	// Get current time and create tm struct
-
+/*
 	std::time_t rawtime = time(nullptr);
 	struct tm* lt = localtime(&rawtime);
 	
@@ -558,6 +558,6 @@ int main(int argc, char* argv[]) {
 			}
 		}
 	}	
-
+*/
 	printCalendar(month, year);
 }
