@@ -179,16 +179,8 @@ void printCalendar(int month, int year) {
  */
 void printUsage() {
 	std::cout << "Usage: plan <optional-arguments>" << std::endl;
-	std::cout << "\t-d <month> <year>: displays the calendar ";
-	std::cout << "for the given month and year" << std::endl;
-	std::cout << "\t-e <day> <month> <year>: ";
-	std::cout << "displays all events on month/day/year" << std::endl;
-	std::cout << "\t-a \"title\" \"description\" <day> <month> <year> <start-time> <end-time>";
-	std::cout << ": adds an event with the given title and description. <start-time> and "; 
-	std::cout << "<end-time> should be written in the form 4:00 or 13:00. Only supports military time" << std::endl;
-	std::cout << "\t-r \"title\" <day> <month> <year>: removes the first event with the";
-	std::cout << " specified day/month/year and title" << std::endl;
-	std::cout << "\t-h: displays this help page" << std::endl;
+	std::cout << "\t-a, --add [Event]:\tAdd Event to calendar" << std::endl;
+	std::cout << "\t-h, --help:\tShow this help page"
 }
 
 /*
@@ -427,9 +419,10 @@ void startUp() {
 }
 
 void processArgs(int argc, char **argv) {
-	const char* const shortOpts = "a";
+	const char* const shortOpts = "a:h";
 	const option longOpts[] = {
-		{"add", no_argument, nullptr, 'a'}
+		{"add", no_argument, nullptr, 'a'},
+		{"help", no_argument, nullptr, 'h'}
 	};
 	
 	while(true) {
@@ -441,11 +434,13 @@ void processArgs(int argc, char **argv) {
 		case 'a':
 			// Set Add Flag and Add events
 			break;
-		
+		case 'h':
+			printUsage();
+			exit(0);
 		case '?':
 		default:
 			printUsage();
-			break;
+			exit(1);
 		}
 	}
 }
