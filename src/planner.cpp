@@ -418,6 +418,9 @@ void startUp() {
 	mkdir(home, S_IRWXU);
 }
 
+/* 
+ * Function for processing the command line arguments
+ */
 void processArgs(int argc, char **argv) {
 	const char* const shortOpts = "a:h";
 	const option longOpts[] = {
