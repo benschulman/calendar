@@ -425,7 +425,8 @@ void processArgs(int argc, char **argv) {
 	const char* const shortOpts = "a:h";
 	const option longOpts[] = {
 		{"add", no_argument, nullptr, 'a'},
-		{"help", no_argument, nullptr, 'h'}
+		{"help", no_argument, nullptr, 'h'},
+		{0}
 	};
 	
 	while(true) {
