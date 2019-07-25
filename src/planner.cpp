@@ -180,7 +180,7 @@ void printCalendar(int month, int year) {
 void printUsage() {
 	std::cout << "Usage: plan <optional-arguments>" << std::endl;
 	std::cout << "\t-a, --add [Event]:\tAdd Event to calendar" << std::endl;
-	std::cout << "\t-h, --help:\tShow this help page"
+	std::cout << "\t-h, --help:\tShow this help page" << std::endl;
 }
 
 /*
