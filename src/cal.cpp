@@ -1,5 +1,7 @@
 #include <string>
 #include <iostream>
+#include "cal.h"
+
 /*
  * A Function that returns the index of the day of the date- day/month/year
  *
