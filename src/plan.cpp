@@ -45,6 +45,8 @@ bool compareEvents(Event e1, Event e2) {
 void printUsage() {
 	std::cout << "Usage: plan <optional-arguments>" << std::endl;
 	std::cout << "\t-a, --add [Event]:\tAdd Event to calendar" << std::endl;
+	std::cout << "\t-t, --today:\tDisplay all events for today" << std::endl;
+	std::cout << "\t-w, --week:\tDisplay all events for this week" << std::endl;
 	std::cout << "\t-h, --help:\tShow this help page" << std::endl;
 }
 
@@ -287,10 +289,12 @@ void startUp() {
  * Function for processing the command line arguments
  */
 void processArgs(int argc, char **argv) {
-	const char* const shortOpts = "a:h";
+	const char* const shortOpts = "a:h:t:w";
 	const option longOpts[] = {
 		{"add", no_argument, nullptr, 'a'},
 		{"help", no_argument, nullptr, 'h'},
+		{"today", no_argument, nullptr, 't'},
+		{"week", no_argument, nullptr, 'w'},
 		{0}
 	};
 	
@@ -301,11 +305,17 @@ void processArgs(int argc, char **argv) {
 		switch (opt)
 		{
 		case 'a':
-			// Set Add Flag and Add events
+			// TODO: Set add flag to add events
 			break;
 		case 'h':
 			printUsage();
 			exit(0);
+		case 't':
+			//TODO: Show today's events 
+			break;
+		case 'w':
+			//TODO: Show week's events
+			break;
 		case '?':
 		default:
 			printUsage();
