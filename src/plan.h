@@ -1,10 +1,6 @@
 #ifndef PLAN_H
 	struct Event;
 	bool compareEvents(Event e1, Event e2);
-	int dayNumber(int day, int month, int year);
-	std::string getNameOfMonth(int month);
-	int getNumDays(int month, int year);
-	void printCalendar(int month, int year);
 	void printUsage();
 	void printEvent(const Event& e);
 	void printEvents(const std::vector<Event>& events);
