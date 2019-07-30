@@ -24,6 +24,10 @@
 #include "plan.h"
 #include "cal.h"
 
+#define VERSION_MAJOR 0
+#define VERSION_MINOR 1
+#define VERSION_REVISION 1
+
 struct Event {
 	time_t start;
 	time_t end;
@@ -44,10 +48,12 @@ bool compareEvents(Event e1, Event e2) {
  */
 void printUsage() {
 	std::cout << "Usage: plan <optional-arguments>" << std::endl;
-	std::cout << "\t-a, --add [Event]:\tAdd Event to calendar" << std::endl;
-	std::cout << "\t-t, --today:\tDisplay all events for today" << std::endl;
-	std::cout << "\t-w, --week:\tDisplay all events for this week" << std::endl;
-	std::cout << "\t-h, --help:\tShow this help page" << std::endl;
+	std::cout << " -a, --add [Event]:\t\t\tAdd Event to calendar" << std::endl;
+	std::cout << " -e, --edit [Event id] [Event]:\t\tEdit event's name. Use with -d to edit date." << std::endl;
+	std::cout << " -d, --date [mm/dd/yyyy]:\t\tUsed with the -e or -a tags to give a date" << std::endl;
+	std::cout << " -t, --today:\t\t\t\tDisplay all events for today" << std::endl;
+	std::cout << " -w, --week:\t\t\t\tDisplay all events for this week" << std::endl;
+	std::cout << " -h, --help:\t\t\t\tShow this help page" << std::endl;
 }
 
 /*
@@ -289,33 +295,65 @@ void startUp() {
  * Function for processing the command line arguments
  */
 void processArgs(int argc, char **argv) {
-	const char* const shortOpts = "a:h:t:w";
+
+	bool dflag = false;
+	bool aflag = false;
+	bool eflag = false;
+
+	const char* const shortOpts = "a:e:d:twVh";
 	const option longOpts[] = {
-		{"add", no_argument, nullptr, 'a'},
+		{"add", required_argument, nullptr, 'a'},
+		{"edit", required_argument, nullptr, 'e'},
+		{"date", required_argument, nullptr, 'd'},
 		{"help", no_argument, nullptr, 'h'},
 		{"today", no_argument, nullptr, 't'},
 		{"week", no_argument, nullptr, 'w'},
+		{"version", no_argument, nullptr, 'V'},
 		{0}
 	};
 	
 	while(true) {
 		const auto opt = getopt_long(argc, argv, shortOpts, longOpts, nullptr);
-		if(opt == -1)
-			break;
+		if(opt == -1){
+			if(dflag)
+				if(!(aflag || eflag)){
+					std::cout << "-d option must be used with -a or -e" << std::endl;
+					printUsage();
+					exit(1);
+				}
+			if(aflag && eflag){
+				std::cout << "Cannot simultaneously add and edit events." << std::endl;
+				printUsage();
+				exit(1);
+			}
+		}
 		switch (opt)
 		{
 		case 'a':
-			// TODO: Set add flag to add events
+			//std::cout << "-a option detected" << std::endl;
+			aflag = true;
+			break;
+		case 'e':
+			eflag = true;
+			break;
+		case 'd':
+			dflag = true;
 			break;
 		case 'h':
+			//std::cout << "-h option detected" << std::endl;
 			printUsage();
 			exit(0);
 		case 't':
+			//std::cout << "-t option detected" << std::endl;
 			//TODO: Show today's events 
 			break;
 		case 'w':
+			//std::cout << "-w option detected" << std::endl;
 			//TODO: Show week's events
 			break;
+		case 'V':
+			std::cout << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_REVISION << std::endl;
+			exit(0);
 		case '?':
 		default:
 			printUsage();
