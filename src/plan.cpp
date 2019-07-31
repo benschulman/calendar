@@ -28,14 +28,6 @@
 #define VERSION_MINOR 2
 #define VERSION_REVISION 1
 
-// struct Event {
-// 	time_t start;
-// 	time_t end;
-	
-// 	std::string title;
-// 	std::string description;
-// };
-
 // /*
 //  * Compares two events for STL sort algorithm
 //  */
@@ -273,7 +265,7 @@ void printUsage() {
 	std::cout << " -a, --add [Event]:\t\t\tAdd Event to calendar" << std::endl;
 	std::cout << " -e, --edit [Event id] [Event]:\t\tEdit event's name. Use with -d to edit date." << std::endl;
 	std::cout << " -d, --date [mm/dd/yyyy]:\t\tUsed with the -e or -a tags to give a date" << std::endl;
-	std::cout << " -t, --time:\t\t\tUsed to specify a time for the event" << std::endl;
+	std::cout << " -t, --time:\t\t\t\tUsed to specify a time for the event" << std::endl;
 	std::cout << " -w, --week:\t\t\t\tDisplay all events for this week" << std::endl;
 	std::cout << " -h, --help:\t\t\t\tShow this help page" << std::endl;
 }
