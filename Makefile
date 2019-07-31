@@ -7,12 +7,15 @@ bin/plan: $(obj)
 	$(CC) $^ -o bin/plan
 
 bin/cal.o: src/cal.cpp src/cal.h
+	mkdir -p bin
 	$(CC) $(CXXFLAGS) src/cal.cpp -o bin/cal.o
 
 bin/plan.o: src/plan.cpp src/plan.h src/cal.h
+	mkdir -p bin
 	$(CC) $(CXXFLAGS) src/plan.cpp -o bin/plan.o
 
 bin/events.o: src/events.cpp src/events.h
+	mkdir -p bin
 	$(CC) $(CXXFLAGS) src/events.cpp -o bin/events.o
 
 .PHONY : clean
